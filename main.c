@@ -68,11 +68,16 @@ int initFilePath(char *fileFullPath, char *filePath) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
     printf("File Split!\n");
 
+    if (argc != 3) {
+        printf("usage file-full-path split-size(GB) \n");
+        return 0;
+    }
+
     // 文件名称
-    char *fileFullPath = "D:/kali-linux-2019.1a-amd64.iso";
+    char *fileFullPath = argv[1];
 
     // 文件名称
     char fileName[128];
@@ -83,8 +88,14 @@ int main() {
     // 文件大小
     long fileSize;
 
+    char *splitSizePtr;
+    long splitSize = strtol(argv[2], &splitSizePtr, 10);
+    if (splitSize <= 0) {
+        printf("error split-size,errno=%d,msg:%s\n", errno, strerror(errno));
+    }
+
     // 块大小
-    long blockSize = 1024 * 1024 * 1024 * 20;
+    long blockSize = 1024L * 1024 * 1024 * splitSize;
 
     int fileFd = open(fileFullPath, O_RDWR, S_IRUSR);
     if (fileFd == -1) {
